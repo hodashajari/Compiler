@@ -221,6 +221,10 @@ public class Scanner {
 		private Scanner getOuterType() {
 			return Scanner.this;
 		}
+		
+		public boolean isKind(Kind kind) {
+			return this.kind == kind;
+		}
 
 	}
 
@@ -370,15 +374,10 @@ public class Scanner {
 						pos++;posInLine++;
 					}
 						break;
-					case '|':
-						if (pos + 1 < length-1) {
-							state = State.AFTER_PIPE;
-							pos++;posInLine++;
-						} else {
-							tokens.add(new Token(Kind.OP_OR,pos,1,line,posInLine));
-							state = State.START;
-							pos++;posInLine++;
-						}
+					case '|':{
+						tokens.add(new Token(Kind.OP_OR,pos,1,line,posInLine));
+						pos++;posInLine++;
+					}
 						break;
 					case '=': {
 						if (pos + 1 < length-1) {

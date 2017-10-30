@@ -13,7 +13,9 @@ import cop5556fa17.Scanner.Token;
 
 import static cop5556fa17.Scanner.Kind.*;
 
-public class SimpleParser {
+import cop5556fa17.AST.*;
+
+public class Parser {
 
 	@SuppressWarnings("serial")
 	public class SyntaxException extends Exception {
@@ -30,7 +32,7 @@ public class SimpleParser {
 	Scanner scanner;
 	Token t;
 
-	SimpleParser(Scanner scanner) {
+	Parser(Scanner scanner) {
 		this.scanner = scanner;
 		t = scanner.nextToken();
 	}
@@ -41,9 +43,11 @@ public class SimpleParser {
 	 * 
 	 * @throws SyntaxException
 	 */
-	public void parse() throws SyntaxException {
-		program();
+	public Program parse() throws SyntaxException {
+		Program p=null;
+		p = program();
 		matchEOF();
+		return p;
 	}
 	
 
@@ -51,10 +55,11 @@ public class SimpleParser {
 	 * Program ::=  IDENTIFIER   ( Declaration SEMI | Statement SEMI )*   
 	 * 
 	 * Program is start symbol of our grammar.
+	 * @return 
 	 * 
 	 * @throws SyntaxException
 	 */
-	void program() throws SyntaxException {
+	Program program() throws SyntaxException {
 		// IDENTIFIER   ( Declaration SEMI | Statement SEMI )*   
 
 		if (t.isKind(IDENTIFIER)) {
