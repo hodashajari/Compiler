@@ -429,7 +429,6 @@ public class Parser {
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
-				e1 = multExpression();
 				e0 = new Expression_Binary(firstToken,e0,op,e1);
 			}
 			
