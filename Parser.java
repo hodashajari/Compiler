@@ -289,6 +289,8 @@ public class Parser {
 							throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 						}
 						condition = new Expression_Conditional(firstToken, condition, trueExpression, falseExpression);
+					}else {
+						throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 					}
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
@@ -371,11 +373,10 @@ public class Parser {
 				op=t;
 				consume();
 				if (getpredictSets("RelExpression").contains(t.kind)) {
-					relExpression();
+					e1 = relExpression();
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
-				e1 = relExpression();
 				e0 = new Expression_Binary(firstToken,e0,op,e1);
 			}
 			
@@ -398,11 +399,10 @@ public class Parser {
 				op=t;
 				consume();
 				if (getpredictSets("AddExpression").contains(t.kind)) {
-					addExpression();
+					e1 = addExpression();
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
-				e1 = addExpression();
 				e0 = new Expression_Binary(firstToken,e0,op,e1);
 			}
 			
@@ -472,22 +472,24 @@ public class Parser {
 	public Statement statement() throws SyntaxException {
 		//  Statement  ::=  IDENTIFIER ( AssignmentStatement | ImageOutStatement   | ImageInStatement)
 		Statement statement=null;
+		Token newToken=scanner.peek();
 		
-		if (t.isKind(IDENTIFIER)) {
-			consume();
-			if (getpredictSets("AssignmentStatement").contains(t.kind)) {
+//		if (t.isKind(IDENTIFIER)) {
+//			consume();
+		
+			if (getpredictSets("AssignmentStatement").contains(newToken.kind)) {
 				statement = assignmentStatement();
-			} else if (getpredictSets("ImageOutStatement").contains(t.kind)) {
+			} else if (getpredictSets("ImageOutStatement").contains(newToken.kind)) {
 				statement = imageOutStatement();
-			} else if (getpredictSets("ImageInStatement").contains(t.kind)) {
+			} else if (getpredictSets("ImageInStatement").contains(newToken.kind)) {
 				statement = imageInStatement();
 			}else {
 				throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 			}
 			
-		} else {
-			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
-		}
+//		} else {
+//			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
+//		}
 		return statement;
 	}
 
@@ -498,8 +500,8 @@ public class Parser {
         LHS lhs=null;
         Expression expression=null;
         
-		if (getpredictSets("Lhs").contains(t.kind)) {
-			lhs();
+		
+			lhs = lhs();
 			if (t.isKind(OP_ASSIGN)) {
 				consume();
 				if (getpredictSets("Expression").contains(t.kind)) {
@@ -510,45 +512,61 @@ public class Parser {
 			}else {
 				throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 			}
-		} else {
-			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
-		}
+		
 		statement_assign=new Statement_Assign(firstToken,lhs,expression);
         return statement_assign;
 
 	}
 
-	void lhs() throws SyntaxException {
+	public LHS lhs() throws SyntaxException {
 		// Lhs::=  LSQUARE LhsSelector RSQUARE   | ε 
-		if (t.isKind(LSQUARE)) {
+		LHS lhs=null;
+        Token firstToken=t;
+        Token name=t;
+        Index in=null;
+        
+        if (t.isKind(IDENTIFIER)) {
 			consume();
-			if (getpredictSets("LhsSelector").contains(t.kind)) {
-				lhsSelector();
-				if (t.isKind(RSQUARE)) {
-					consume();
+        } else {
+			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
+		}
+	    if (getpredictSets("Lhs").contains(t.kind)) {
+			if (t.isKind(LSQUARE)) {
+				consume();
+				if (getpredictSets("LhsSelector").contains(t.kind)) {
+					in = lhsSelector();
+					if (t.isKind(RSQUARE)) {
+						consume();
+					}else {
+						throw new SyntaxException(t,"Error while parsing program at " + t.kind);
+					}
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
-			}else {
-				throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 			}
+	    }else {
+			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 		}
+		 lhs=new LHS(firstToken,name,in);
+	     return lhs;
 		
 	}
 
-	void lhsSelector() throws SyntaxException {
+	public Index lhsSelector() throws SyntaxException {
 		// LhsSelector ::= LSQUARE  ( XySelector  | RaSelector  )   RSQUARE
+		Index i=null;
+		
 		if (t.isKind(LSQUARE)) {
 			consume();
 			if (getpredictSets("XySelector").contains(t.kind)) {
-				xySelector();
+				i = xySelector();
 				if (t.isKind(RSQUARE)) {
 					consume();
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
 			} else if (getpredictSets("RaSelector").contains(t.kind)) {
-				raSelector();
+				i = raSelector();
 				if (t.isKind(RSQUARE)) {
 					consume();
 				}else {
@@ -561,17 +579,29 @@ public class Parser {
 		} else {
 			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 		}
+		return i;
 		
 	}
 
-	void raSelector() throws SyntaxException {
+	public Index raSelector() throws SyntaxException {
 		// KW_r COMMA KW_A
+		Index i=null;
+        Token firstToken=t;
+        Expression_PredefinedName e0=null;
+        Expression_PredefinedName e1=null;
+        
 		if (t.isKind(KW_r)) {
+			Token ftr=t;
+			Kind k=t.kind;
 			consume();
+			e0=new Expression_PredefinedName(ftr,k);
 			if (t.isKind(COMMA)) {
 				consume();
 				if (t.isKind(KW_A)) {
+					Token ftA=t;
+	                 k=t.kind;
 					consume();
+					e1=new Expression_PredefinedName(ftA,k);
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
@@ -581,17 +611,31 @@ public class Parser {
 		}else {
 			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 		}
+		i=new Index(firstToken,e0,e1);
+        return i;
 		
 	}
 
-	void xySelector() throws SyntaxException {
+	public Index xySelector() throws SyntaxException {
 		// KW_x COMMA KW_y
+		Index i=null;
+        Token firstToken=t;
+        Expression_PredefinedName e0=null;
+        Expression_PredefinedName e1=null;
+        Kind k;
+        
 		if (t.isKind(KW_x)) {
+			Token ftx=t;
+			k=t.kind;
 			consume();
+			e0=new Expression_PredefinedName(ftx,k);
 			if (t.isKind(COMMA)) {
 				consume();
 				if (t.isKind(KW_y)) {
+					Token fty=t;
+				    k=t.kind;
 					consume();
+					e1=new Expression_PredefinedName(fty,k);
 				}else {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 				}
@@ -601,7 +645,8 @@ public class Parser {
 		}else {
 			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 		}
-		
+		i=new Index(firstToken,e0,e1);
+	     return i;
 	}
 
 	private Statement_Out imageOutStatement() throws SyntaxException{
@@ -610,6 +655,12 @@ public class Parser {
         Token firstToken=t;
         Token name=t;
         Sink sink=null;
+        
+        if (t.isKind(IDENTIFIER)) {
+			consume();
+        } else {
+			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
+		}
 		
 		if (t.isKind(OP_RARROW)) {
 			consume();
@@ -653,6 +704,11 @@ public class Parser {
         Token firstToken=t;
         Token name=t;
         Source source=null;
+        if (t.isKind(IDENTIFIER)) {
+			consume();
+        } else {
+			throw new SyntaxException(t,"Error while parsing program at " + t.kind);
+		}
         
 		if (t.isKind(OP_LARROW)) {
 			consume();
@@ -984,6 +1040,7 @@ public class Parser {
 					throw new SyntaxException(t,"Error while parsing program at " + t.kind);
 			}
 		}else if (t.isKind(OP_MINUS)) {
+			op = t;
 			consume();
 			if (getpredictSets("UnaryExpression").contains(t.kind)) {
 				e = unaryExpression();

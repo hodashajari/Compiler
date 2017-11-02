@@ -1,18 +1,29 @@
 package cop5556fa17.AST;
 
+import cop5556fa17.AST.Declaration;
+
 import cop5556fa17.Scanner.Token;
 
 public class LHS extends ASTNode{
 
 	public final String name;
 	public final Index index;
-
+	boolean isCartesian;
+	public Declaration dec;
 
 
 	public LHS(Token firstToken, Token name, Index index) {
 		super(firstToken);
 		this.name = name.getText();
 		this.index = index;
+	}
+	
+	public boolean isCartesian() {
+		return isCartesian;
+	}
+
+	public void setCartesian(boolean isCartesian) {
+		this.isCartesian = isCartesian;
 	}
 
 	@Override
