@@ -236,6 +236,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		
 		declaration_Image.typeName = Type.IMAGE;       // TypeUtils.getType(declaration_Image.firstToken);
 		
+		// TO DO 
+		
 		// REQUIRE if xSize != ε then ySize != ε && xSize.Type == INTEGER && ySize.type == INTEGER
 		
 		
@@ -259,7 +261,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		}
 		if(declaration_Image.source != null) {
 			declaration_Image.source.visit(this, null);
-		}else 
+		}
 //		{
 //			throw new SemanticException(declaration_Image.firstToken, "Source not provided");
 //		}
@@ -447,13 +449,15 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Declaration dec = symTable.get(statement_In.name);
 			statement_In.setDec(dec);
 			
-			if(dec.typeName != statement_In.source.typeName) {
-				throw new SemanticException(statement_In.firstToken, "Not declared before.");
-			}
+			statement_In.source.visit(this, arg);
+//			if(dec.typeName != statement_In.source.typeName) {
+//				throw new SemanticException(statement_In.firstToken, "Type mismatch");
+//			}
 			
-		}else {
-			throw new SemanticException(statement_In.firstToken, "Not declared before.");
 		}
+//			else {
+//			throw new SemanticException(statement_In.firstToken, "Not declared before.");
+//		}
 		
 		return statement_In;
 	}

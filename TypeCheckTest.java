@@ -111,6 +111,12 @@ public class TypeCheckTest {
 	 thrown.expect(SemanticException.class);
 	 typeCheck(input);
 	 }
-
-
+// String input = "identifier boolean bool = sin[+1,1230]&x&!!!!!false | 123*0/true%(!y);";
+	 
+	 @Test
+	 public void testUndec2() throws Exception {
+		 String input = "prog file f = \"file_name\"; f <- \"file_name2\" ;";
+	// thrown.expect(SemanticException.class);
+	 typeCheck(input);
+	 }
 }
