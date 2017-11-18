@@ -171,140 +171,135 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		return declaration_Variable;
 		
 	}
+	
+	
 
 	@Override
 	public Object visitExpression_Binary(Expression_Binary expression_Binary, Object arg) throws Exception {
 		// TODO change to switch
 		// verify with test cas3s
 		
-		Label iftrue = new Label();
-		Label iffalse = new Label();
+		Label trueCase = new Label();
+		Label falseCase = new Label();
 
-		if (expression_Binary.e0 != null)
+		if (expression_Binary.e0 != null) {
 			expression_Binary.e0.visit(this, arg);
-		if (expression_Binary.e1 != null)
+		}
+			
+		
+		if (expression_Binary.e1 != null) {
 			expression_Binary.e1.visit(this, arg);
-		
-		
+		}
+			
 
-		if (expression_Binary.op.equals(Kind.OP_PLUS)) {
+		if (expression_Binary.op == Kind.OP_PLUS) {
+			
+			// no operands
 			mv.visitInsn(IADD);
-		} else if (expression_Binary.op.equals(Kind.OP_MINUS)) {
+			
+		} else if (expression_Binary.op == Kind.OP_MINUS) {
 			mv.visitInsn(ISUB);
-		} else if (expression_Binary.op.equals(Kind.OP_OR)) {
-			mv.visitInsn(IOR);
-		} else if (expression_Binary.op.equals(Kind.OP_AND)) {
-			mv.visitInsn(IAND);
-		} else if (expression_Binary.op.equals(Kind.OP_EQ)) {
-			mv.visitJumpInsn(IF_ICMPEQ, iftrue);
-			mv.visitLdcInsn(0);
-			mv.visitJumpInsn(GOTO, iffalse);
-			
-			mv.visitLabel(iftrue);
-			mv.visitLdcInsn(1);
-			
-			mv.visitLabel(iffalse);
-			
-		} else if (expression_Binary.op.equals(Kind.OP_NEQ)) {
-			mv.visitJumpInsn(IF_ICMPNE, iftrue);
-	
-			mv.visitLdcInsn(0);
-			mv.visitJumpInsn(GOTO, iffalse);
 			
 			
-			mv.visitLabel(iftrue);
-			mv.visitLdcInsn(1);
-			
-			mv.visitLabel(iffalse);
-		} else if (expression_Binary.op.equals(Kind.OP_LT)) {
-			mv.visitJumpInsn(IF_ICMPLT, iftrue);
-			
-			mv.visitLdcInsn(0);
-			mv.visitJumpInsn(GOTO, iffalse);
-			
-			mv.visitLabel(iftrue);
-			mv.visitLdcInsn(1);
-			
-			mv.visitLabel(iffalse);
-		} else if (expression_Binary.op.equals(Kind.OP_LE)) {
-			mv.visitJumpInsn(IF_ICMPLE, iftrue);
-		
-			mv.visitLdcInsn(0);
-			mv.visitJumpInsn(GOTO, iffalse);
-			
-			
-			mv.visitLabel(iftrue);
-			mv.visitLdcInsn(1);
-			
-			mv.visitLabel(iffalse);
-		} else if (expression_Binary.op.equals(Kind.OP_GT)) {
-			mv.visitJumpInsn(IF_ICMPGT, iftrue);
-			
-			mv.visitLdcInsn(0);
-			mv.visitJumpInsn(GOTO, iffalse);
-			
-			
-			mv.visitLabel(iftrue);
-			mv.visitLdcInsn(1);
-			
-			mv.visitLabel(iffalse);
-		} else if (expression_Binary.op.equals(Kind.OP_GE)) {
-			mv.visitJumpInsn(IF_ICMPGE, iftrue);
-		
-			mv.visitLdcInsn(0);
-			mv.visitJumpInsn(GOTO, iffalse);
-			mv.visitLabel(iftrue);
-			mv.visitLdcInsn(1);
-			
-			mv.visitLabel(iffalse);
-		} else if (expression_Binary.op.equals(Kind.OP_TIMES)) {
+		}  else if (expression_Binary.op == Kind.OP_TIMES) {
 			mv.visitInsn(IMUL);
 			
-		} else if (expression_Binary.op.equals(Kind.OP_DIV)) {
+		} else if (expression_Binary.op == Kind.OP_DIV) {
+			
+			
 			mv.visitInsn(IDIV);
-		} else if (expression_Binary.op.equals(Kind.OP_MOD)) {
+		} else if (expression_Binary.op == Kind.OP_MOD) {
+			
 			mv.visitInsn(IREM);
+			
+		}else if (expression_Binary.op == Kind.OP_AND) {
+			
+			
+			mv.visitInsn(IAND);
+			
+			
+		} else if (expression_Binary.op == Kind.OP_OR) {
+			mv.visitInsn(IOR);
+			
+			
+		
+		}  else if (expression_Binary.op == Kind.OP_EQ) {
+			mv.visitJumpInsn(IF_ICMPEQ, trueCase);
+			mv.visitLdcInsn(0);
+			mv.visitJumpInsn(GOTO, falseCase);
+			
+			mv.visitLabel(trueCase);
+			mv.visitLdcInsn(1);
+			
+			mv.visitLabel(falseCase);
+			
+		}else if (expression_Binary.op == Kind.OP_LT) {
+			mv.visitJumpInsn(IF_ICMPLT, trueCase);
+			
+			mv.visitLdcInsn(0);
+			mv.visitJumpInsn(GOTO, falseCase);
+			
+			mv.visitLabel(trueCase);
+			mv.visitLdcInsn(1);
+			
+			mv.visitLabel(falseCase);
+			
+			
+		} else if (expression_Binary.op == Kind.OP_NEQ) {
+			mv.visitJumpInsn(IF_ICMPNE, trueCase);
+	
+			mv.visitLdcInsn(0);
+			mv.visitJumpInsn(GOTO, falseCase);
+			
+			mv.visitLabel(trueCase);
+			mv.visitLdcInsn(1);
+			
+			mv.visitLabel(falseCase);
+			
+			
+		} else if (expression_Binary.op == Kind.OP_GE) {
+			mv.visitJumpInsn(IF_ICMPGE, trueCase);
+		
+			mv.visitLdcInsn(0);
+			mv.visitJumpInsn(GOTO, falseCase);
+			mv.visitLabel(trueCase);
+			mv.visitLdcInsn(1);
+			
+			mv.visitLabel(falseCase);
+			
+			
+		} else if (expression_Binary.op == Kind.OP_GT ) {
+			mv.visitJumpInsn(IF_ICMPGT, trueCase);
+			
+			mv.visitLdcInsn(0);
+			mv.visitJumpInsn(GOTO, falseCase);
+			
+			
+			mv.visitLabel(trueCase);
+			mv.visitLdcInsn(1);
+			
+			mv.visitLabel(falseCase);
+			
+			
+		} else if (expression_Binary.op == Kind.OP_LT) {
+			mv.visitJumpInsn(IF_ICMPLE, trueCase);
+		
+			mv.visitLdcInsn(0);
+			mv.visitJumpInsn(GOTO, falseCase);
+			
+			
+			mv.visitLabel(trueCase);
+			mv.visitLdcInsn(1);
+			
+			mv.visitLabel(falseCase);
+			
+			
 		}
 		CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary.typeName);
 		return null;
 	}
 
-	@Override
-	public Object visitExpression_Unary(Expression_Unary expression_Unary, Object arg) throws Exception {
-		// TODO switch cases
-		// test cas3s
-		if (expression_Unary.e != null)
-			expression_Unary.e.visit(this, arg);
-
-		if (expression_Unary.op == Kind.OP_PLUS) {
-			
-		} 
-		else if (expression_Unary.op == Kind.OP_MINUS) {
-			
-			mv.visitInsn(INEG);
-		} 
-		else if (expression_Unary.op == Kind.OP_EXCL) {
-			if (expression_Unary.e.typeName == TypeUtils.Type.INTEGER) {
-				mv.visitLdcInsn(INTEGER.MAX_VALUE);
-				mv.visitInsn(IXOR);
-			} else if (expression_Unary.e.typeName == TypeUtils.Type.BOOLEAN) {
-				Label boolt = new Label();
-				Label boolf = new Label();
-
-				mv.visitJumpInsn(IFEQ, boolf);
-				mv.visitLdcInsn(0);
-				mv.visitJumpInsn(GOTO, boolt);
-
-				mv.visitLabel(boolf);
-				mv.visitLdcInsn(1);
-
-				mv.visitLabel(boolt);
-			}
-		}
-
-		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.typeName);
-		return null;
-	}
+	
 
 	// generate code to leave the two values on the stack
 	@Override
@@ -324,23 +319,24 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitExpression_Conditional(Expression_Conditional expression_Conditional, Object arg)
 			throws Exception {
 		// TODO test cas3s
-		Label conditionfalse = new Label();
-		Label conditiontrue = new Label();
+		Label trueCase = new Label();
+		Label falseCase = new Label();
 		
-		if(expression_Conditional.condition!=null)
-		expression_Conditional.condition.visit(this, arg);
+		if(expression_Conditional.condition != null) {
+			expression_Conditional.condition.visit(this, arg);
+		}
 		
-		mv.visitJumpInsn(IFEQ, conditionfalse);
+		mv.visitJumpInsn(IFEQ, falseCase);
 		expression_Conditional.trueExpression.visit(this, arg);
-		mv.visitJumpInsn(GOTO, conditiontrue);
+		mv.visitJumpInsn(GOTO, trueCase);
 		
-		mv.visitLabel(conditionfalse);
+		mv.visitLabel(falseCase);
 		expression_Conditional.falseExpression.visit(this, arg);
 		
-		mv.visitLabel(conditiontrue);
+		mv.visitLabel(trueCase);
 		
 		
-//		 CodeGenUtils.genLogTOS(GRADE, mv,expression_Conditional.trueExpression.typeName);
+		 CodeGenUtils.genLogTOS(GRADE, mv,expression_Conditional.trueExpression.typeName);
 		 return null;
 		
 		
@@ -349,6 +345,47 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 //		return null;
 	}
 
+	@Override
+	public Object visitExpression_Unary(Expression_Unary expression_Unary, Object arg) throws Exception {
+		// TODO switch cases
+		// test cas3s
+		if (expression_Unary.e != null)
+			expression_Unary.e.visit(this, arg);
+
+		if (expression_Unary.op == Kind.OP_PLUS) {
+			
+		} 
+		else if (expression_Unary.op == Kind.OP_MINUS) {
+			
+			mv.visitInsn(INEG);
+		} 
+		else if (expression_Unary.op == Kind.OP_EXCL) {
+			
+			if (expression_Unary.e.typeName == Type.INTEGER) {
+				
+				
+				mv.visitLdcInsn(INTEGER.MAX_VALUE);
+				mv.visitInsn(IXOR);
+				
+				
+			} else if (expression_Unary.e.typeName == Type.BOOLEAN) {
+				Label booleanTrue = new Label();
+				Label booleanFalse = new Label();
+
+				mv.visitJumpInsn(IFEQ, booleanFalse);
+				mv.visitLdcInsn(0);
+				mv.visitJumpInsn(GOTO, booleanTrue);
+
+				mv.visitLabel(booleanFalse);
+				mv.visitLdcInsn(1);
+
+				mv.visitLabel(booleanTrue);
+			}
+		}
+
+		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.typeName);
+		return null;
+	}
 
 	@Override
 	public Object visitDeclaration_Image(Declaration_Image declaration_Image, Object arg) throws Exception {
@@ -550,7 +587,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		//TODO - verify with test cas3s
 		String fieldtype = "";
 
-		if (expression_Ident.typeName == TypeUtils.Type.BOOLEAN)
+		if (expression_Ident.typeName == Type.BOOLEAN)
 			fieldtype = "Z";
 		else
 			fieldtype = "I";
