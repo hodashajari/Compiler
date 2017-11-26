@@ -327,6 +327,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		}
 		
 		mv.visitJumpInsn(IFEQ, falseCase);
+		
 		expression_Conditional.trueExpression.visit(this, arg);
 		mv.visitJumpInsn(GOTO, trueCase);
 		
