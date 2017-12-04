@@ -470,7 +470,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		LHS l = (LHS) statement_Assign.lhs.visit(this, null);
 		Expression expr = (Expression) statement_Assign.e.visit(this, null);
 		
-		if(l.typeName != expr.typeName) {
+		if(l.typeName != expr.typeName && !(l.typeName == Type.IMAGE && expr.typeName == Type.INTEGER)) {
 			throw new SemanticException(statement_Assign.firstToken, "Type mismatch: statement_Assign.lhs.typeName != expr.typeName ");
 		}
 		

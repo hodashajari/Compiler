@@ -11,6 +11,11 @@ public class Statement_Out extends Statement {
 	public void setDec(Declaration dec) {this.dec = dec;}
 	public Declaration getDec() {return dec;}
 	
+	Declaration_Image decImg;
+	
+	public void setDecImg(Declaration_Image decImg) {this.decImg = decImg;}
+	public Declaration getDecImg() {return decImg;}
+	
 	public Statement_Out(Token firstToken, Token name, Sink sink) {
 		super(firstToken);
 		this.name = name.getText();

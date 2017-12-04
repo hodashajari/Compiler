@@ -597,7 +597,7 @@ public class Parser {
 			e0=new Expression_PredefinedName(ftr,k);
 			if (t.isKind(COMMA)) {
 				consume();
-				if (t.isKind(KW_A)) {
+				if (t.isKind(KW_a)) {
 					Token ftA=t;
 	                 k=t.kind;
 					consume();
