@@ -302,7 +302,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Expression expr = (Expression) source_CommandLineParam.paramNum.visit(this, arg);
 		
 		if(expr.typeName == Type.INTEGER) {
-			source_CommandLineParam.typeName = expr.typeName;
+			source_CommandLineParam.typeName = null;
 		}else {
 			throw new SemanticException(source_CommandLineParam.firstToken, "Type mismatch");
 		}
@@ -338,7 +338,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		declaration_SourceSink.typeName = TypeUtils.getType(declaration_SourceSink.firstToken);
 		
 		Source src = (Source) declaration_SourceSink.source.visit(this, null);
-		if(declaration_SourceSink.typeName != src.typeName) {
+		if((declaration_SourceSink.typeName != src.typeName) && (src.typeName != null)) { // 
 			throw new SemanticException(declaration_SourceSink.firstToken, "Type mismatch: declaration_SourceSink.Type == src.Type");
 		}
 		

@@ -184,10 +184,12 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		declaration_Variable.setSlotNum(slot++);
 		
 		if (fieldType.equals(Type.INTEGER)) {
-			FieldVisitor fv = cw.visitField(ACC_STATIC, fieldName, "I", null, null);
+			initValue=new Integer(0);
+			FieldVisitor fv = cw.visitField(ACC_STATIC, fieldName, "I", null, initValue);
 			fv.visitEnd();
 		} else if (fieldType.equals(Type.BOOLEAN)) {
-			FieldVisitor fv = cw.visitField(ACC_STATIC, fieldName, "Z", null, null);
+			initValue=new Boolean(false);
+			FieldVisitor fv = cw.visitField(ACC_STATIC, fieldName, "Z", null, initValue);
 			fv.visitEnd();
 		}
 		
@@ -202,7 +204,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		
 	
 		
-		return declaration_Variable;
+		return null;
 		
 	}
 	
@@ -431,7 +433,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			}
 		}
 
-		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.typeName);
+//		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.typeName);
 		return null;
 	}
 
@@ -479,16 +481,14 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		
 //		declaration_Image.
 		
-		
-		
-
 		return null;
 	}
 	
   
 	@Override
 	public Object visitSource_StringLiteral(Source_StringLiteral source_StringLiteral, Object arg) throws Exception {
-		mv.visitFieldInsn(GETSTATIC, className, source_StringLiteral.fileOrUrl, "Ljava/lang/String;");
+		   mv.visitLdcInsn(source_StringLiteral.fileOrUrl);
+		   
 		return null;
 	}
 
@@ -520,8 +520,8 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitSource_Ident(Source_Ident source_Ident, Object arg) throws Exception {
 		// This identifier refers to a String.  Load it onto the stack.
 		
-		mv.visitFieldInsn(GETSTATIC, className, source_Ident.name, "Ljava/lang/String;");
-		
+		mv.visitFieldInsn(GETSTATIC, className, source_Ident.name, ImageSupport.StringDesc);
+		   
 		return null;
 	}
 
@@ -530,11 +530,18 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitDeclaration_SourceSink(Declaration_SourceSink declaration_SourceSink, Object arg)
 			throws Exception {
 //		mv.visitFieldInsn(GETSTATIC, className, declaration_SourceSink.name, "");
-		if(declaration_SourceSink.source != null) {
-			declaration_SourceSink.source.visit(this, arg);
-			mv.visitFieldInsn(PUTSTATIC, className,declaration_SourceSink.name, "Ljava/lang/String;");
-		}
 		
+		fv = cw.visitField(ACC_STATIC, declaration_SourceSink.name, ImageSupport.StringDesc, null, null);
+		
+		fv.visitEnd();
+
+		
+		if(declaration_SourceSink.source!=null) {
+		
+			declaration_SourceSink.source.visit(this, arg);
+			 mv.visitFieldInsn(PUTSTATIC, className, declaration_SourceSink.name, ImageSupport.StringDesc);
+			
+		}	
 		return null;
 	}
 	
@@ -756,7 +763,8 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitSink_Ident(Sink_Ident sink_Ident, Object arg) throws Exception {
 		
-		mv.visitFieldInsn(GETSTATIC, className, sink_Ident.name, "Ljava/lang/String;");
+		mv.visitFieldInsn(GETSTATIC, className, sink_Ident.name, ImageSupport.StringDesc);
+//		String h = ImageSupport.StringDesc;
 		mv.visitMethodInsn(INVOKESTATIC, ImageSupport.className, "write", ImageSupport.writeSig, false);
 		return null;
 	}
@@ -776,12 +784,15 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		//TODO - verify with test cas3s
 		String fieldtype = "";
 
-		if (expression_Ident.typeName == Type.BOOLEAN)
+		if (expression_Ident.typeName == Type.BOOLEAN) {
 			fieldtype = "Z";
-		else
+			mv.visitFieldInsn(GETSTATIC, className, expression_Ident.name, fieldtype);
+		}else if (expression_Ident.typeName == Type.INTEGER) {
 			fieldtype = "I";
-
-		mv.visitFieldInsn(GETSTATIC, className, expression_Ident.name, fieldtype);
+			mv.visitFieldInsn(GETSTATIC, className, expression_Ident.name, fieldtype);
+		}
+			
+		
 		// mv.visitLdcInsn(expression_Ident.name);
 //		CodeGenUtils.genLogTOS(GRADE, mv, expression_Ident.typeName);
 		return null;
