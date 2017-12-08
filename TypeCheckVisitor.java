@@ -196,6 +196,9 @@ public class TypeCheckVisitor implements ASTVisitor {
 		}else {
 			throw new SemanticException(expression_PixelSelector.firstToken, "Not declared before");
 		}
+		if(expression_PixelSelector.index != null) {
+			expression_PixelSelector.index.visit(this, arg);
+		}
 		
 		return expression_PixelSelector;
 
@@ -417,9 +420,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 		
 		if(symTable.get(statement_Out.name) != null){
 			Declaration dec = symTable.get(statement_Out.name);
+			statement_Out.sink.visit(this, null);
 			statement_Out.setDec(dec);
 			
-			statement_Out.sink.visit(this, null);
+			
 			
 			if(  ((dec.typeName == Type.INTEGER || dec.typeName == Type.BOOLEAN) && statement_Out.sink.typeName == Type.SCREEN)
 	                  ||  (dec.typeName == Type.IMAGE && (statement_Out.sink.typeName == Type.FILE || statement_Out.sink.typeName == Type.SCREEN))  ) {
@@ -449,7 +453,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Declaration dec = symTable.get(statement_In.name);
 			statement_In.setDec(dec);
 			
-			statement_In.source.visit(this, arg);
+//			statement_In.source.visit(this, arg);
 //			if(dec.typeName != statement_In.source.typeName) {
 //				throw new SemanticException(statement_In.firstToken, "Type mismatch");
 //			}
@@ -494,7 +498,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 			if (lhs.index != null) {
 				Index ind = (Index) lhs.index.visit(this, arg);
 				lhs.setCartesian(ind.isCartesian());
-			}else {
+			}
+			else {
 				lhs.setCartesian(false);
 			}
 			
