@@ -346,10 +346,10 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			//Done
 		}else {
 			mv.visitInsn(DUP2);
-			mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "cart_y", RuntimeFunctions.cart_ySig,false);
+			mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "cart_x", RuntimeFunctions.cart_xSig,false);
 			mv.visitInsn(DUP_X2);
 			mv.visitInsn(POP);
-			mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "cart_x", RuntimeFunctions.cart_xSig,false);
+			mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "cart_y", RuntimeFunctions.cart_ySig,false);
 			}
 		
 		return null;
@@ -822,6 +822,23 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitMethodInsn(INVOKESTATIC, ImageSupport.className, "getY", ImageSupport.getYSig, false);
 			mv.visitVarInsn(ISTORE, kindInd.get(Kind.KW_Y));
 			
+//			if(statement_Assign.lhs.index.e1.firstToken.kind == Kind.KW_a) {
+//				mv.visitVarInsn(ILOAD,1 );
+//				
+//				mv.visitVarInsn(ILOAD,2);
+//				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "polar_a",RuntimeFunctions.polar_aSig, false);
+//
+//				mv.visitVarInsn(ISTORE,7);
+//				mv.visitVarInsn(ILOAD,7);
+//			}else if (statement_Assign.lhs.index.e0.firstToken.kind == Kind.KW_r) {
+//				mv.visitVarInsn(ILOAD,1 );
+//				mv.visitVarInsn(ILOAD,2);
+//				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "polar_r",RuntimeFunctions.polar_rSig, false);
+//
+//				mv.visitVarInsn(ISTORE,5);
+//				mv.visitVarInsn(ILOAD,5);
+//			}
+//			
 		
 		    Label l0 = new Label();
 			mv.visitLabel(l0);
@@ -843,8 +860,57 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			Label l6 = new Label();
 			mv.visitLabel(l6);
 			mv.visitFrame(Opcodes.F_APPEND,1, new Object[] {Opcodes.INTEGER}, 0, null);
+			
 			statement_Assign.e.visit(this, arg);
-			statement_Assign.lhs.visit(this, arg);
+			
+//			if(statement_Assign.lhs.isCartesian()==false){
+//				
+//				mv.visitVarInsn(ILOAD,1 );
+//				
+//				mv.visitVarInsn(ILOAD,2);
+//				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "polar_a",RuntimeFunctions.polar_aSig, false);
+//
+//				mv.visitVarInsn(ISTORE,7);
+//
+//				mv.visitVarInsn(ILOAD,1 );
+//				mv.visitVarInsn(ILOAD,2);
+//				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "polar_r",RuntimeFunctions.polar_rSig, false);
+//
+//				mv.visitVarInsn(ISTORE,5);
+//				
+//				//loading and storing polar finished.
+//				
+//				// Staring cartx carty part. Loading the lhs image variable on stack next.
+//				
+////				mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, ImageSupport.ImageDesc);
+////
+////
+////			   
+////			    
+////			    
+////			    mv.visitInsn(DUP2);
+////				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "cart_y", RuntimeFunctions.cart_ySig,false);
+////				mv.visitInsn(DUP_X2);
+////				mv.visitInsn(POP);
+////				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className, "cart_x", RuntimeFunctions.cart_xSig,false);
+////				
+//				 mv.visitVarInsn(ILOAD,5); //KW_r
+//
+//				    mv.visitVarInsn(ILOAD,7); //KW_a
+//				
+//			    mv.visitMethodInsn(INVOKESTATIC, ImageSupport.className,"setPixel", ImageSupport.setPixelSig, false);
+//				
+////				mv.visitFieldInsn(GETSTATIC, className, "x", "I");
+////				mv.visitFieldInsn(GETSTATIC, className, "y", "I");
+////				mv.visitInsn(DUP2);
+////				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className ,"polar_a" , RuntimeFunctions.polar_aSig, false);
+////				mv.visitFieldInsn(PUTSTATIC, className, "a", "I");
+////				mv.visitMethodInsn(INVOKESTATIC, RuntimeFunctions.className ,"polar_r" , RuntimeFunctions.polar_rSig, false);
+////				mv.visitFieldInsn(PUTSTATIC, className, "r", "I");
+//				
+//			}else
+				statement_Assign.lhs.visit(this, arg);
+			
 			Label l7 = new Label();
 			mv.visitLabel(l7);
 			mv.visitIincInsn(2, 1);

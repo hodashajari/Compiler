@@ -2,10 +2,10 @@ package cop5556fa17;
 
 public interface ImageResources {
 
-	public final static String imageFile1 = "/Users/purnendu/Documents/audio.jpg";
-//	public final static String imageFile1 = "/cise/homes/purnendu/dp.jpg";
-	public final static String imageFile2 = "/Users/purnendu/Documents/testPLP.png";
-//	public final static String imageFile2 = "/cise/homes/purnendu/testPLP.png";
+//	public final static String imageFile1 = "/Users/purnendu/Documents/audio.jpg";
+	public final static String imageFile1 = "/cise/homes/purnendu/dp.jpg";
+//	public final static String imageFile2 = "/Users/purnendu/Documents/testPLP.png";
+	public final static String imageFile2 = "/cise/homes/purnendu/testPLP.png";
 	
 	public final static String imageURL1 = "file://\\" + imageFile1;
 	
